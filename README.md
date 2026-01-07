@@ -1,74 +1,134 @@
-# Proyecto de Gestión de Playlists Musicales
+🎵 MusicApp - Plataforma de Gestión de Playlists
 
-Este proyecto es una aplicación web completa y responsive para la gestión de playlists y reproducción de música. Desarrollado como proyecto final para la asignatura de Desarrollo Web del Grupo M31.
+Asignatura: Proyecto de Desarrollo Web
+Grupo: M31 - Grado de Ingeniería Informática
+Fecha de Entrega: 09 de enero de 2026
+1. 📋 Descripción del Proyecto
 
-## 📋 Descripción
-La aplicación permite a los usuarios registrarse, explorar un catálogo musical, crear playlists personalizadas y reproducir música. Incluye un panel de administración para gestionar el catálogo de canciones. El proyecto ha sido desarrollado desde cero utilizando HTML, CSS y JavaScript Vanilla (sin frameworks), con un backend en Node.js.
+MusicApp es una aplicación web completa y responsive diseñada para la gestión de música y listas de reproducción.
+El objetivo del proyecto es permitir a los usuarios gestionar un catálogo musical, crear playlists personalizadas (públicas y privadas) y reproducir audio en streaming.
 
-## 🛠️ Tecnologías Utilizadas
-* **Frontend:** HTML5, CSS3, JavaScript (Vanilla).
-* **Backend:** Node.js, Express.
-* **Base de Datos:** MySQL.
-* **Seguridad:** Bcrypt (hashing de contraseñas), protección contra SQL Injection.
+El desarrollo se ha realizado desde cero, sin utilizar frameworks de frontend (como React o Vue) ni de backend pesado, aplicando conocimientos fundamentales de la arquitectura Cliente-Servidor y APIs REST.
 
-## ⚙️ Requisitos del Sistema
-Para ejecutar este proyecto necesitas tener instalado:
-* Node.js (v14 o superior).
-* MySQL Server.
-* Navegador web moderno (Chrome, Firefox, Edge).
+Funcionalidades Principales
+	•	Autenticación: Registro e inicio de sesión seguro (Roles: Admin y User).
+	•	Gestión de Catálogo (Admin): Subida de archivos MP3 y portadas, edición y borrado de canciones.
+	•	Gestión de Playlists: CRUD completo (Crear, Leer, Actualizar, Borrar).
+	•	Reproductor: Reproducción de audio HTML5 con barra de progreso interactiva.
+	•	Búsqueda y Filtros: Búsqueda en tiempo real por título/artista y filtrado por género.
 
-## 🚀 Instalación Paso a Paso
+⸻
 
-1.  **Clonar el repositorio:**
-    ```bash
-    git clone [https://github.com/Carmenchuti/Web-.git](https://github.com/Carmenchuti/Web-.git)
-    cd Web-
-    ```
-   
+2. 🛠️ Tecnologías Utilizadas
 
-2.  **Instalar dependencias del servidor:**
-    Ve a la carpeta raíz (o donde esté el package.json) y ejecuta:
-    ```bash
-    npm install
-    ```
+El proyecto sigue el stack tecnológico solicitado en la propuesta:
 
-3.  **Configurar la Base de Datos:**
-    * Abre tu gestor de MySQL (Workbench, phpMyAdmin, o terminal).
-    * Crea una base de datos llamada `music_platform`.
-    * Importa el archivo `database/schema.sql` para crear las tablas automáticamente.
-    * *(Opcional)*: Asegúrate de configurar las credenciales de tu base de datos en el archivo `Backend/database.js`.
+Frontend
+	•	HTML5 (Semántico).
+	•	CSS3 (Diseño Responsive, Flexbox, Grid, Variables CSS).
+	•	JavaScript Vanilla (ES6+, Fetch API, Manipulación del DOM).
 
-4.  **Ejecutar el servidor:**
-    ```bash
-    npm start
-    ```
-    El servidor arrancará en `http://localhost:3000`.
+Backend
+	•	Node.js (Entorno de ejecución).
+	•	Express.js (Servidor web y API REST).
+	•	Multer (Gestión de subida de archivos multimedia).
 
-## 👥 Credenciales de Prueba
+Base de Datos
+	•	MySQL (Base de datos relacional).
+
+Seguridad
+	•	Bcrypt (Hashing de contraseñas).
+	•	Cors (Gestión de acceso de origen cruzado).
+
+⸻
+
+3. ⚙️ Requisitos del Sistema
+
+Para ejecutar este proyecto en local, necesitas tener instalado:
+	1.	Node.js (v16 o superior)
+https://nodejs.org/
+	2.	MySQL Server (v8.0 o superior)
+https://dev.mysql.com/downloads/
+	3.	Git (para clonar el repositorio).
+
+⸻
+
+4. 🚀 Instrucciones de Instalación y Ejecución
+
+Sigue estos pasos detallados para poner en marcha el proyecto:
+
+Paso 1: Clonar el repositorio
+git clone https://github.com/TU_USUARIO/WEB-.git
+cd WEB-
+Paso 2: Instalar Dependencias
+
+Instala las librerías necesarias definidas en el package.json:
+npm install
+Paso 3: Configuración de la Base de Datos
+	1.	Abre tu gestor de base de datos (MySQL Workbench, phpMyAdmin o Terminal).
+	2.	Crea una base de datos vacía llamada music_platform.
+	3.	Importa/Ejecuta el script SQL ubicado en database/schema.sql.
+	4.	(Opcional) Verifica que el archivo Backend/config/database.js tiene la contraseña correcta de tu MySQL local.
+
+Paso 4: Ejecutar el Servidor
+npm start
+La terminal mostrará:
+Servidor corriendo en puerto 3000.
+Paso 5: Abrir la Aplicación
+
+Abre el archivo Frontend/index.html en tu navegador.
+Recomendación: usar la extensión Live Server de VS Code.
+5. 👥 Credenciales de Prueba
 Para facilitar la corrección, se han creado los siguientes usuarios por defecto:
-
 * **Administrador:**
     * User: `admin`
     * Pass: `admin123`
 * **Usuario Estándar:**
     * User: `usuario`
     * Pass: `usuario123`
-
-## 📂 Estructura del Proyecto
-
-```text
-/
+6. 📂 Estructura del Proyecto
+WEB-/
 ├── Backend/
-│   ├── config/       # Configuración de BD
-│   ├── controllers/  # Lógica del servidor
-│   ├── routes/       # Definición de rutas API
-│   └── uploads/      # Archivos MP3 e imágenes subidos
+│   ├── config/
+│   ├── controllers/
+│   ├── routes/
+│   ├── uploads/
+│   └── server.js
 ├── database/
-│   └── schema.sql    # Script de creación de tablas
+│   └── schema.sql
 ├── Frontend/
-│   ├── assets/       # Imágenes estáticas
-│   ├── css/          # Hoja de estilos principal
-│   ├── js/           # Lógica del cliente (Player, App, Admin)
-│   ├── index.html    # Página principal
-│   └── admin.html    # Panel de administración
-└── README.md         # Documentación
+│   ├── assets/
+│   ├── css/
+│   ├── js/
+│   │   ├── app.js
+│   │   ├── admin.js
+│   │   ├── player.js
+│   │   ├── playlists.js
+│   │   └── ui.js
+│   ├── index.html
+│   └── admin.html
+├── package.json
+└── README.md
+7. 🗄️ Documentación de Base de Datos
+	•	users: credenciales y roles (Admin / User).
+	•	songs: catálogo musical (título, artista, género, rutas).
+	•	playlists: listas creadas por los usuarios.
+	•	playlist_songs: relación N:M entre playlists y canciones.
+
+⸻
+
+8. 📸 Capturas de Pantalla
+Vista Principal y Reproductor
+Panel de Administración
+Gestión de Playlists
+9. ⚖️ Licencias y Créditos
+
+Música: Canciones con licencia CC0 o Creative Commons, uso educativo.
+Ver archivo MUSIC_LICENSES.md.
+
+Código: Desarrollado por el Grupo M31.
+
+Autores
+	•	Pablo Embil – Backend & Base de Datos
+	•	Javier Belloch – Frontend & UI
+	•	Carmen Bolaños – Lógica de Negocio & Integración
