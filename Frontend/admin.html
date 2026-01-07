@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel Admin - Subir Música</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <h1>Panel de Administrador</h1>
+    <a href="index.html">← Volver al Inicio</a>
+
+    <div class="upload-container">
+        <h2>Subir Canción al Catálogo</h2>
+        <form id="uploadForm">
+            <input type="text" name="title" placeholder="Título de la canción" required>
+            <input type="text" name="artist" placeholder="Artista" required>
+            <input type="text" name="album" placeholder="Álbum">
+            <input type="number" name="duration" placeholder="Duración (segundos)" required>
+            
+            <label>Género:</label>
+            <select name="genre">
+                <option value="rock">Rock</option>
+                <option value="pop">Pop</option>
+                <option value="jazz">Jazz</option>
+                <option value="electronic">Electrónica</option>
+            </select>
+
+            <label>Archivo MP3:</label>
+            <input type="file" name="audioFile" accept="audio/*" required>
+            
+            <label>Portada (Imagen):</label>
+            <input type="file" name="coverFile" accept="image/*">
+
+            <button type="submit">Subir Canción</button>
+        </form>
+    </div>
+
+    <script src="js/app.js"></script> <script src="js/admin.js"></script>
+</body>
+</html>
