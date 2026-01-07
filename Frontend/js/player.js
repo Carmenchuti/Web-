@@ -153,5 +153,5 @@ function actualizarTiempoTexto(progreso) {
     const mins = Math.floor(segundosActuales / 60);
     const secs = segundosActuales % 60;
     
-    currTimeText.textContent = ⁠ ${mins}:${secs < 10 ? '0' : ''}${secs} ⁠;
+   currTimeText.textContent = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
 }

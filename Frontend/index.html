@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,12 +8,13 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
+
 <body>
 
     <section id="auth-screen">
         <div class="auth-box">
             <h1>Bienvenido a MusicApp</h1>
-            
+
             <div id="login-view">
                 <form id="login-form">
                     <input type="text" name="username" placeholder="Usuario o Correo" required>
@@ -36,18 +38,18 @@
     </section>
 
     <div id="app-interface" style="display: none;">
-        
+
         <aside class="sidebar">
             <div class="logo">
                 <i class="fa-solid fa-music"></i> Mi Música
             </div>
-            
+
             <nav>
                 <ul>
                     <li onclick="showSection('home')" class="active"><i class="fa-solid fa-house"></i> Inicio</li>
                     <li onclick="showSection('search')"><i class="fa-solid fa-magnifying-glass"></i> Buscar</li>
                     <li onclick="showSection('library')"><i class="fa-solid fa-list"></i> Mis Playlists</li>
-                    
+
                     <li id="admin-menu-item" style="display: none;" onclick="showSection('admin')">
                         <i class="fa-solid fa-gear"></i> Gestión (Admin)
                     </li>
@@ -61,7 +63,7 @@
         </aside>
 
         <main class="main-content">
-            
+
             <header class="mobile-header">
                 <button id="menu-toggle"><i class="fa-solid fa-bars"></i></button>
                 <h3>MusicApp</h3>
@@ -75,32 +77,36 @@
             </section>
 
             <section id="view-search" class="content-section" style="display: none;">
-                <h2>Buscar y Filtrar</h2>
-                <div class="search-bar-container">
-                    <input type="text" id="searchInput" placeholder="Buscar artista, canción...">
-                    
-                    <select id="genreFilter">
-                        <option value="all">Todos los géneros</option>
-                        <option value="Pop">Pop</option>
-                        <option value="Rock">Rock</option>
-                        <option value="Urbano">Urbano</option>
-                        <option value="Electrónica">Electrónica</option>
-                        <option value="Jazz">Jazz</option>
-                    </select>
+                <h2>Explorar</h2>
+
+                <div class="search-container">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <input type="text" id="searchInput" placeholder="¿Qué quieres escuchar hoy?">
+                </div>
+
+                <div class="filters-container">
+                    <span class="filter-label">Filtrar por género:</span>
+                    <div id="genre-tags" class="tags-wrapper">
+                        <button class="filter-tag active" data-genre="all">Todo</button>
+                        <button class="filter-tag" data-genre="Pop">Pop</button>
+                        <button class="filter-tag" data-genre="Rock">Rock</button>
+                        <button class="filter-tag" data-genre="Urbano">Urbano</button>
+                        <button class="filter-tag" data-genre="Electrónica">Electrónica</button>
+                        <button class="filter-tag" data-genre="Jazz">Jazz</button>
+                    </div>
                 </div>
 
                 <div class="grid-canciones" id="search-results">
-                    </div>
+                </div>
             </section>
 
             <section id="view-library" class="content-section" style="display: none;">
                 <div class="section-header">
                     <h2>Mis Playlists</h2>
-                    <button onclick="createPlaylist()" class="btn-create">+ Nueva Playlist</button>
                 </div>
-                
+
                 <div id="playlist-container" class="playlist-grid">
-                    <p>No tienes playlists creadas aún.</p>
+                    <p>Cargando librería...</p>
                 </div>
             </section>
 
@@ -109,7 +115,7 @@
 
                 <div class="admin-panel">
                     <h3><i class="fa-solid fa-cloud-arrow-up"></i> Subir Nueva Canción</h3>
-                    
+
                     <form id="uploadForm" class="admin-form" enctype="multipart/form-data">
                         <div class="form-group">
                             <input type="text" name="title" placeholder="Título de la canción" required>
@@ -126,6 +132,7 @@
                                 <option value="Rock">Rock</option>
                                 <option value="Urbano">Urbano</option>
                                 <option value="Electrónica">Electrónica</option>
+                                <option value="Jazz">Jazz</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -174,14 +181,10 @@
     </footer>
 
     <script src="js/ui.js"></script>
-    
     <script src="js/player.js"></script>
-
     <script src="js/app.js"></script>
-
     <script src="js/playlists.js"></script>
-
     <script src="js/admin.js"></script>
-
 </body>
+
 </html>
