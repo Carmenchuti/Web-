@@ -1,0 +1,31 @@
+{
+  "name": "web-",
+  "version": "1.0.0",
+  "description": "Este proyecto es una aplicación web completa y responsive para la gestión de playlists y reproducción de música. Desarrollado como proyecto final para la asignatura de Desarrollo Web del Grupo M31.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Carmenchuti/Web-.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Carmenchuti/Web-/issues"
+  },
+  "homepage": "https://github.com/Carmenchuti/Web-#readme",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "multer": "^2.0.2",
+    "mysql2": "^3.16.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.11"
+  }
+}
