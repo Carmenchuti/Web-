@@ -1,128 +1,86 @@
-CREATE DATABASE IF NOT EXISTS musicapp;
 USE musicapp;
 
--- =========================
--- LIMPIEZA (para poder re-ejecutar sin errores)
--- =========================
-DROP TABLE IF EXISTS play_history;
-DROP TABLE IF EXISTS favorites;
-DROP TABLE IF EXISTS playlist_songs;
-DROP TABLE IF EXISTS playlists;
-DROP TABLE IF EXISTS songs;
-DROP TABLE IF EXISTS users;
+-- 1. Desactivar protecciones (OBLIGATORIO)
+SET FOREIGN_KEY_CHECKS = 0;
 
--- =========================
--- TABLA: users
--- =========================
-CREATE TABLE users (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  username VARCHAR(50) NOT NULL,
-  email VARCHAR(120) NOT NULL,
-  password_hash VARCHAR(255) NOT NULL,
-  role VARCHAR(10) NOT NULL DEFAULT 'USER',  -- 'ADMIN' o 'USER'
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-  UNIQUE (username),
-  UNIQUE (email)
-);
+-- 2. BORRAR DATOS (Usamos DELETE en vez de TRUNCATE para evitar error #1701)
+DELETE FROM play_history;
+DELETE FROM favorites;
+DELETE FROM playlist_songs;
+DELETE FROM playlists;
+DELETE FROM songs;
+DELETE FROM users;
 
--- =========================
--- TABLA: songs
--- (cover_path en la seed es URL completa)
--- (album puede ir NULL)
--- =========================
-CREATE TABLE songs (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  title VARCHAR(150) NOT NULL,
-  artist VARCHAR(150) NOT NULL,
-  album VARCHAR(150) NULL,
-  duration_seconds INT NOT NULL,
-  cover_path VARCHAR(500) NULL,     -- URL puede ser larga
-  file_path VARCHAR(255) NOT NULL,  -- /uploads/audio/...
-  genre VARCHAR(50) NOT NULL,
-  purpose VARCHAR(50) NOT NULL,
-  year_published INT NULL,
-  license VARCHAR(30) NOT NULL,
-  play_count INT NOT NULL DEFAULT 0,
-  uploaded_by INT NULL,
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-);
+-- 3. REINICIAR CONTADORES DE ID A 1
+ALTER TABLE play_history AUTO_INCREMENT = 1;
+ALTER TABLE favorites AUTO_INCREMENT = 1;
+ALTER TABLE playlist_songs AUTO_INCREMENT = 1;
+ALTER TABLE playlists AUTO_INCREMENT = 1;
+ALTER TABLE songs AUTO_INCREMENT = 1;
+ALTER TABLE users AUTO_INCREMENT = 1;
 
--- =========================
--- TABLA: playlists
--- (cover_path opcional, no se usa en la seed pero se deja)
--- =========================
-CREATE TABLE playlists (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  owner_user_id INT NOT NULL,
-  name VARCHAR(120) NOT NULL,
-  description VARCHAR(500) NULL,
-  cover_path VARCHAR(500) NULL,
-  visibility VARCHAR(10) NOT NULL DEFAULT 'PRIVATE', -- 'PUBLIC' o 'PRIVATE'
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-);
+-- 4. INSERTAR USUARIOS (Con IDs fijos)
+INSERT INTO users (id, username, email, password_hash, role) VALUES
+(1, 'admin', 'admin@musicapp.local', '$2b$10$8K1p/a0dL1e3q.w2r.5.e.12345678hashfalsoPARAPRUEBAS', 'ADMIN'),
+(2, 'maria', 'maria@musicapp.local', '$2b$10$8K1p/a0dL1e3q.w2r.5.e.12345678hashfalsoPARAPRUEBAS', 'USER'),
+(3, 'juan',  'juan@musicapp.local',  '$2b$10$8K1p/a0dL1e3q.w2r.5.e.12345678hashfalsoPARAPRUEBAS', 'USER'),
+(4, 'lucia', 'lucia@musicapp.local', '$2b$10$8K1p/a0dL1e3q.w2r.5.e.12345678hashfalsoPARAPRUEBAS', 'USER');
 
--- =========================
--- TABLA: playlist_songs
--- (en la seed insertas playlist_id, song_id, position)
--- =========================
-CREATE TABLE playlist_songs (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  playlist_id INT NOT NULL,
-  song_id INT NOT NULL,
-  position INT NOT NULL
-);
+-- 5. INSERTAR CANCIONES
+INSERT INTO songs
+(id, title, artist, duration_seconds, cover_path, file_path, genre, purpose, year_published, license, uploaded_by)
+VALUES
+(1, 'Bohemian Rhapsody', 'Queen', 355,
+ 'https://upload.wikimedia.org/wikipedia/en/9/9f/Bohemian_Rhapsody.png',
+ 'uploads/audio/bohemian_rhapsody.mp3',
+ 'Rock', 'escuchar', 1975, 'Public Domain', 1),
 
--- =========================
--- TABLA: favorites
--- =========================
-CREATE TABLE favorites (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  user_id INT NOT NULL,
-  song_id INT NOT NULL,
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-);
+(2, 'Blinding Lights', 'The Weeknd', 200,
+ 'https://upload.wikimedia.org/wikipedia/en/e/e6/The_Weeknd_-_Blinding_Lights.png',
+ 'uploads/audio/blinding_lights.mp3',
+ 'Pop', 'ejercicio', 2019, 'CC BY', 1),
 
--- =========================
--- TABLA: play_history
--- =========================
-CREATE TABLE play_history (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  user_id INT NOT NULL,
-  song_id INT NOT NULL,
-  played_at DATETIME DEFAULT CURRENT_TIMESTAMP
-);
+(3, 'Bad Guy', 'Billie Eilish', 194,
+ 'https://upload.wikimedia.org/wikipedia/en/3/33/Billie_Eilish_-_Bad_Guy.png',
+ 'uploads/audio/bad_guy.mp3',
+ 'Pop', 'escuchar', 2019, 'CC BY', 1),
 
--- =========================
--- CLAVES FORÁNEAS (BÁSICAS)
--- =========================
-ALTER TABLE songs
-  ADD CONSTRAINT fk_songs_uploaded_by
-  FOREIGN KEY (uploaded_by) REFERENCES users(id);
+(4, 'Uptown Funk', 'Mark Ronson', 270,
+ 'https://upload.wikimedia.org/wikipedia/en/a/a7/Mark_Ronson_-_Uptown_Funk.png',
+ 'uploads/audio/uptown_funk.mp3',
+ 'Pop', 'fiesta', 2014, 'CC BY', 1),
 
-ALTER TABLE playlists
-  ADD CONSTRAINT fk_playlists_owner
-  FOREIGN KEY (owner_user_id) REFERENCES users(id);
+(5, 'Lose Yourself', 'Eminem', 326,
+ 'https://upload.wikimedia.org/wikipedia/en/8/8b/Lose_Yourself.jpg',
+ 'uploads/audio/lose_yourself.mp3',
+ 'Urbano', 'motivacion', 2002, 'CC BY', 1),
 
-ALTER TABLE playlist_songs
-  ADD CONSTRAINT fk_playlist_songs_playlist
-  FOREIGN KEY (playlist_id) REFERENCES playlists(id);
+(6, 'Take Five', 'Dave Brubeck', 324,
+ 'https://upload.wikimedia.org/wikipedia/en/9/9c/Time_out_album_cover.png',
+ 'uploads/audio/take_five.mp3',
+ 'Jazz', 'estudio', 1959, 'CC BY', 1);
 
-ALTER TABLE playlist_songs
-  ADD CONSTRAINT fk_playlist_songs_song
-  FOREIGN KEY (song_id) REFERENCES songs(id);
+-- 6. INSERTAR PLAYLISTS
+INSERT INTO playlists (id, owner_user_id, name, description, visibility) VALUES
+(1, 2, 'Mis favoritas', 'Canciones que más me gustan', 'PRIVATE'),
+(2, 3, 'Para entrenar', 'Música para hacer deporte', 'PRIVATE'),
+(3, 1, 'Top MusicApp', 'Selección del administrador', 'PUBLIC');
 
-ALTER TABLE favorites
-  ADD CONSTRAINT fk_favorites_user
-  FOREIGN KEY (user_id) REFERENCES users(id);
+-- 7. RELACIONES
+INSERT INTO playlist_songs (playlist_id, song_id, position) VALUES
+(1, 1, 1), (1, 3, 2), (1, 6, 3),
+(2, 2, 1), (2, 4, 2), (2, 5, 3),
+(3, 1, 1), (3, 2, 2), (3, 5, 3);
 
-ALTER TABLE favorites
-  ADD CONSTRAINT fk_favorites_song
-  FOREIGN KEY (song_id) REFERENCES songs(id);
+INSERT INTO favorites (user_id, song_id) VALUES
+(2, 1), (2, 3),
+(3, 5),
+(4, 2);
 
-ALTER TABLE play_history
-  ADD CONSTRAINT fk_history_user
-  FOREIGN KEY (user_id) REFERENCES users(id);
+INSERT INTO play_history (user_id, song_id) VALUES
+(2, 1), (2, 1), (2, 3),
+(3, 5), (3, 5),
+(4, 2);
 
-ALTER TABLE play_history
-  ADD CONSTRAINT fk_history_song
-  FOREIGN KEY (song_id) REFERENCES songs(id);
+-- 8. Reactivar protecciones
+SET FOREIGN_KEY_CHECKS = 1;
