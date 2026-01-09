@@ -115,7 +115,7 @@ function cargarDesdeBD() {
     console.log("Intentando conectar con la Base de Datos...");
     
     // Llamamos al archivo que acabas de crear
-    fetch('php/get_songs.php')
+    fetch('php/canciones.php')
         .then(response => {
             if (!response.ok) {
                 throw new Error("Error HTTP: " + response.status);
