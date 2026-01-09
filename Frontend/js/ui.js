@@ -1,53 +1,13 @@
-// js/ui.js
+// js/ui.js - VERSIÓN CONECTADA A BASE DE DATOS REAL
 
 // =========================================
-// 1. DATOS DE EJEMPLO (TUS CANCIONES REALES)
+// 1. VARIABLES GLOBALES
 // =========================================
-const cancionesMock = [
-    { 
-        titulo: "Fresh", 
-        artista: "Bransboynd", 
-        // Portada naranja estilo "Fresh"
-        img: "https://placehold.co/300/ff9f43/ffffff?text=Fresh", 
-        duracion: "2:06",
-        url: "assets/audio/cancion1.mp3" 
-    },
-    { 
-        titulo: "Music Free", 
-        artista: "Audioknap", 
-        // Portada azul estilo moderno
-        img: "https://placehold.co/300/0abde3/ffffff?text=Music+Free", 
-        duracion: "1:38",
-        url: "assets/audio/cancion2.mp3" 
-    },
-    { 
-        titulo: "Sweet Life", 
-        artista: "AlexGhrol", 
-        // Portada rosa estilo "Sweet"
-        img: "https://placehold.co/300/ff9ff3/ffffff?text=Sweet+Life", 
-        duracion: "1:42",
-        url: "assets/audio/cancion3.mp3" 
-    },
-    { 
-        titulo: "Hype Drill", 
-        artista: "Kontraa", 
-        // Portada roja estilo agresivo/drill
-        img: "https://placehold.co/300/ee5253/ffffff?text=Hype+Drill", 
-        duracion: "3:55",
-        url: "assets/audio/cancion4.mp3" 
-    },
-    { 
-        titulo: "Deep Abstract Ambient", 
-        artista: "Umbrella", 
-        // Portada morada estilo ambiente
-        img: "https://placehold.co/300/5f27cd/ffffff?text=Ambient", 
-        duracion: "1:38",
-        url: "assets/audio/cancion5.mp3" 
-    }
-];
+// Aquí guardaremos las canciones que vengan de la Base de Datos
+let cancionesGlobal = []; 
 
 // =========================================
-// 2. SELECCIÓN DE ELEMENTOS DEL DOM
+// 2. ELEMENTOS DEL DOM
 // =========================================
 const authScreen = document.getElementById('auth-screen');
 const appInterface = document.getElementById('app-interface');
@@ -85,41 +45,33 @@ if(showRegisterBtn && showLoginBtn){
     });
 }
 
-// Procesar LOGIN (Simulado para facilitar la demo)
+// PROCESAR LOGIN
 if(loginForm) {
     loginForm.addEventListener('submit', function(e) {
         e.preventDefault();
         const email = this.querySelector('input[type="email"]').value;
+        // En una app real, aquí haríamos otro fetch a login.php
+        // Para la demo, entramos directamente:
         entrarEnLaApp(email);
     });
 }
 
-// Procesar REGISTRO (Conectado a PHP)
+// PROCESAR REGISTRO
 if(registerForm) {
     registerForm.addEventListener('submit', function(e) {
         e.preventDefault();
 
-        // 1. Recoger datos del HTML
         const username = this.querySelector('input[type="text"]').value;
         const email = this.querySelector('input[type="email"]').value;
         const password = this.querySelector('input[type="password"]').value;
 
-        // 2. Enviar a PHP (Backend)
-        // Nota: Ajusta la ruta si 'php' está fuera de 'Frontend'
-        // Si tu carpeta php está al mismo nivel que index.html, usa 'php/register.php'
-        // Si tu carpeta php está un nivel arriba, usa '../php/register.php'
+        // Ruta relativa al archivo PHP
         const rutaPHP = 'php/register.php'; 
 
         fetch(rutaPHP, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ 
-                username: username, 
-                email: email, 
-                password: password 
-            })
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, email, password })
         })
         .then(response => response.json())
         .then(data => {
@@ -132,14 +84,12 @@ if(registerForm) {
         })
         .catch(error => {
             console.error('Error:', error);
-            // Si falla la conexión, dejamos entrar en modo demo
-            alert("Modo Demo: No se pudo conectar con la BD, pero entramos igual.");
-            entrarEnLaApp(email);
+            alert("Error de conexión con el servidor (PHP).");
         });
     });
 }
 
-// Función común para ENTRAR
+// FUNCIÓN DE ENTRADA AL SISTEMA
 function entrarEnLaApp(email) {
     authScreen.style.display = 'none';
     appInterface.style.display = 'grid';
@@ -148,63 +98,107 @@ function entrarEnLaApp(email) {
     const nombreUsuario = email.split('@')[0];
     document.getElementById('username-display').textContent = 'Hola, ' + nombreUsuario;
 
+    // Si es admin, mostramos menú
     if(email.includes('admin')) {
         const adminMenu = document.getElementById('admin-menu-item');
         if(adminMenu) adminMenu.style.display = 'block';
-        renderAdminTable();
     }
 
-    cargarCanciones();
+    // ¡AQUÍ ESTÁ LA MAGIA! Cargamos desde la BD real
+    cargarDesdeBD();
 }
 
 // =========================================
-// 4. NAVEGACIÓN SPA
+// 4. CONEXIÓN CON LA BASE DE DATOS (NUEVO)
+// =========================================
+function cargarDesdeBD() {
+    console.log("Intentando conectar con la Base de Datos...");
+    
+    // Llamamos al archivo que acabas de crear
+    fetch('php/get_songs.php')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Error HTTP: " + response.status);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log("Canciones recibidas:", data);
+            
+            if(data.error) {
+                alert("Error de BD: " + data.error);
+                return;
+            }
+
+            // Guardamos los datos reales en la variable global
+            cancionesGlobal = data;
+            
+            // Renderizamos la interfaz
+            renderizarCanciones(cancionesGlobal);
+            renderAdminTable(); // Si es admin, llena la tabla también
+            
+            // IMPORTANTE: Pasamos la lista al reproductor para que el botón 'Siguiente' funcione
+            if(window.playTrack) {
+                // Actualizamos la referencia interna del player.js si fuera necesario
+                // (Para simplificar, player.js usaba cancionesMock, ahora lo adaptamos dinámicamente)
+                window.cancionesMock = cancionesGlobal; 
+            }
+        })
+        .catch(error => {
+            console.error('Error al cargar canciones:', error);
+            document.getElementById('home-tracks').innerHTML = '<p style="color:red">Error: No se pudo conectar con la base de datos. Revisa get_songs.php</p>';
+        });
+}
+
+// =========================================
+// 5. RENDERIZADO DE LA INTERFAZ
+// =========================================
+function renderizarCanciones(listaCanciones) {
+    const contenedor = document.getElementById('home-tracks');
+    if(!contenedor) return;
+    contenedor.innerHTML = ''; 
+
+    if(listaCanciones.length === 0) {
+        contenedor.innerHTML = '<p>No hay canciones en la base de datos.</p>';
+        return;
+    }
+
+    listaCanciones.forEach(cancion => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+            <img src="${cancion.img}" alt="${cancion.titulo}">
+            <h4>${cancion.titulo}</h4>
+            <p>${cancion.artista}</p>
+        `;
+        card.addEventListener('click', () => {
+            if(window.playTrack) window.playTrack(cancion);
+        });
+        contenedor.appendChild(card);
+    });
+}
+
+// =========================================
+// 6. NAVEGACIÓN SPA
 // =========================================
 window.showSection = function(sectionId) {
     document.querySelectorAll('.content-section').forEach(sec => sec.style.display = 'none');
-    
     const target = document.getElementById('view-' + sectionId);
     if(target) target.style.display = 'block';
-
+    
     const sidebar = document.querySelector('.sidebar');
     if(sidebar) sidebar.classList.remove('active');
 };
 
 // =========================================
-// 5. GESTIÓN DE CANCIONES
-// =========================================
-function cargarCanciones() {
-    const contenedor = document.getElementById('home-tracks');
-    if(!contenedor) return;
-    contenedor.innerHTML = ''; 
-
-    cancionesMock.forEach(cancion => {
-        const card = crearTarjetaCancion(cancion);
-        contenedor.appendChild(card);
-    });
-}
-
-function crearTarjetaCancion(cancion) {
-    const card = document.createElement('div');
-    card.className = 'card';
-    card.innerHTML = `
-        <img src="${cancion.img}" alt="${cancion.titulo}">
-        <h4>${cancion.titulo}</h4>
-        <p>${cancion.artista}</p>
-    `;
-    card.addEventListener('click', () => {
-        if(window.playTrack) window.playTrack(cancion);
-    });
-    return card;
-}
-
-// =========================================
-// 6. BUSCADOR
+// 7. BUSCADOR (FILTRA SOBRE LO DESCARGADO)
 // =========================================
 if(searchInput) {
     searchInput.addEventListener('input', (e) => {
         const termino = e.target.value.toLowerCase();
-        const resultados = cancionesMock.filter(cancion => 
+        
+        // Filtramos sobre la variable global cargada desde la BD
+        const resultados = cancionesGlobal.filter(cancion => 
             cancion.titulo.toLowerCase().includes(termino) || 
             cancion.artista.toLowerCase().includes(termino)
         );
@@ -215,29 +209,37 @@ if(searchInput) {
             searchResults.innerHTML = '<p>No se encontraron resultados.</p>';
         } else {
             resultados.forEach(cancion => {
-                searchResults.appendChild(crearTarjetaCancion(cancion));
+                // Reutilizamos lógica de tarjeta
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <img src="${cancion.img}" alt="${cancion.titulo}">
+                    <h4>${cancion.titulo}</h4>
+                    <p>${cancion.artista}</p>
+                `;
+                card.addEventListener('click', () => {
+                    if(window.playTrack) window.playTrack(cancion);
+                });
+                searchResults.appendChild(card);
             });
         }
     });
 }
 
 // =========================================
-// 7. PANEL DE ADMINISTRADOR
+// 8. PANEL DE ADMINISTRADOR
 // =========================================
 function renderAdminTable() {
     if (!adminTableBody) return;
     adminTableBody.innerHTML = ''; 
 
-    cancionesMock.forEach((cancion, index) => {
+    cancionesGlobal.forEach((cancion, index) => {
         const row = document.createElement('tr');
         row.innerHTML = `
             <td><img src="${cancion.img}" alt="cover" style="width:40px; border-radius:4px;"></td>
             <td>${cancion.titulo}</td>
             <td>${cancion.artista}</td>
             <td>
-                <button class="action-btn btn-edit" onclick="alert('Función de editar simulada')">
-                    <i class="fa-solid fa-pen"></i>
-                </button>
                 <button class="action-btn btn-delete" onclick="borrarCancion(${index})">
                     <i class="fa-solid fa-trash"></i>
                 </button>
@@ -247,37 +249,18 @@ function renderAdminTable() {
     });
 }
 
+// Nota: El borrado aquí es visual para la demo. 
+// Para borrar de BD real necesitaríamos 'delete_song.php'
 window.borrarCancion = function(index) {
-    if(confirm('¿Seguro que quieres eliminar esta canción del catálogo?')) {
-        cancionesMock.splice(index, 1); 
+    if(confirm('¿Eliminar de la lista? (Solo visualmente en esta demo)')) {
+        cancionesGlobal.splice(index, 1);
         renderAdminTable(); 
-        cargarCanciones();  
+        renderizarCanciones(cancionesGlobal);  
     }
 };
 
-if(adminForm) {
-    adminForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        
-        const nuevaCancion = {
-            titulo: document.getElementById('admin-title').value,
-            artista: document.getElementById('admin-artist').value,
-            img: "https://placehold.co/300/grey/white?text=New", // Portada genérica
-            duracion: document.getElementById('admin-duration').value,
-            url: "" // Sin audio real para las nuevas subidas en demo
-        };
-
-        cancionesMock.push(nuevaCancion);
-        renderAdminTable();
-        cargarCanciones();
-        
-        alert('Canción añadida al catálogo con éxito (Solo visualmente en esta demo).');
-        adminForm.reset();
-    });
-}
-
 // =========================================
-// 8. INTERFAZ MÓVIL
+// 9. INTERFAZ MÓVIL Y UTILS
 // =========================================
 const menuToggle = document.getElementById('menu-toggle');
 if(menuToggle){
